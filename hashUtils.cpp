@@ -1,21 +1,9 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
-#include<string.h>
-#include<iostream>
-#include<string>
-#include<sstream>
-#include<math.h>
+#if 1
+#include"hashUtils.h"
 
 using namespace std;
-
-unsigned int table_sz;
-
-typedef enum op_t
-{
-	OP_TYPE_GET = 0,
-	OP_TYPE_PUT = 1
-} op_t;
+ 
+unsigned int table_sz =  0;
 
 bool isPrime(unsigned int f)
 {
@@ -52,20 +40,19 @@ unsigned int findNextPrime(unsigned int f)
 		
 unsigned int compute_ht_size(unsigned int song_length)
 {
-	unsigned int table_sz = findNextPrime(song_length);
-	return table_sz;
+	return findNextPrime(song_length);
 }
 
 unsigned int stringToInt(string s, unsigned int start_pos)
 {
-	unsigned int result,i = 0, str_length;
+	unsigned int result = 0,i = 0, str_length;
 
 	str_length = s.length();
 	
 	/* Extract 4 characters and place them in to integer */
 	while(((start_pos + i) < str_length) && (i < 4))
 	{
-	   result << 8;
+	   result <<= 8;
 	   result |= (s[start_pos + i]);
 	   i++;
 	}
@@ -77,42 +64,6 @@ unsigned int stringToInt(string s, unsigned int start_pos)
 	}
 
 	return(result);
-}
-
-long* split_chunk(string s,int chunk_size,int num_chunks)
-{
-	int strLength = s.length(), j = 0, n;
-	
-	string *chunks = new string[num_chunks];
-
-	for(int i = 0 ; i < strLength; i += chunk_size)
-	{
-		if (i + chunk_size > strLength)
-		{
-			chunks[j] =  s.substr(i,(strLength  - i));
-			int k = chunk_size - chunks[j].length();
-			while(k--)
-				chunks[j].push_back(0);
-			j++;
-		}
-		else
-		    chunks[j++] =  s.substr(i,chunk_size);
-	}
-
-	long *blocks = (long *)new long[num_chunks];
-	
-	for(int i = 0 ; i < num_chunks; i ++)
-	{
-		cout << chunks[i] << endl;
-	    blocks[i] = std::stol(string_to_hex(chunks[i]),nullptr,16);
-		cout << blocks[i] <<endl;
-	}
-
-	if(chunks)
-	{
-		delete[] chunks;
-	}
-	return blocks;
 }
 
 unsigned int reverseBits(unsigned int num)
@@ -143,29 +94,28 @@ unsigned long xor_fold(long *blocks,int n)
 	return result;
 }
 
-int hash_key(string s)
+unsigned int stringFold(string s)
 {
-	int strLength = s.length(), n;
-	if(strLength%4  == 0)
-	    n = (strLength/4);
-	else
-		n = (strLength/4)+1;
+	unsigned int result = 0,foldedStr = 0,i = 0;
+	int strLength = s.length();
+	int chunkNum = 0;
 
-	long *chunks= split_chunk(s,4,n);
+	cout << s <<endl;
 	
-	for(int i = 0; i < n ;i += 2)
+	for(i = 0; i < strLength; i += 4)
 	{
-		chunks[i] = reverseBits(chunks[i]);
-		cout << chunks[i] << "\n";
+		result = stringToInt(s,i);
+		
+		if(++chunkNum & 1)
+		{
+			foldedStr ^= reverseBits(result);
+		}
+		else
+		{
+			foldedStr ^= result;
+		}	
 	}
-
-	unsigned long result = xor_fold(chunks,n);
-
-	if(chunks)
-	{
-		delete[] chunks;
-	}
-	return result % table_sz;
+	return foldedStr;
 }
 
 unsigned int randomFold(unsigned int num, unsigned int bit_chunk_len)
@@ -202,23 +152,23 @@ op_t findRandomOpType(unsigned int table_size)
 	op_t result_op = OP_TYPE_GET;
 	unsigned int fold;
 	
-	fold = ceil(log((double)table_sz)));
+	fold = ceil(log((double)table_sz));
 	randon_num = (int)rand();
 
 	/* Find MSB of random folded result */
 	if(randomFold((unsigned int)randon_num,fold) & (1 << (fold-1)))
 	{
 		result_op = OP_TYPE_PUT;
-		printf("PUT");
+		printf("PUT\n");
 	}
 	else
 	{
 	    result_op = OP_TYPE_GET;
-		printf("GET");
+		printf("GET\n");
 	}
 	return result_op;
 }
-
+#if 0
 int main()
 {
 	time_t t;
@@ -228,15 +178,17 @@ int main()
     srand((unsigned int) time(&t));
 
 	/* Determine List Length after parsing the input */
-	list_length = 8;
+	int list_length = 8;
 	
 	table_sz = compute_ht_size(list_length);
 	/* Find the random operation type */
 
 	random_operation_type = findRandomOpType(table_sz);
 
-	printf("%d\n",hash_key("Listen to the music"));
+	unsigned int hash_key = stringFold("Listen to the music");  // Answer should be 946358539
 	
-	
+	printf("Hash Index = %d\n",hash_key);
 	return 0;
 }
+#endif
+#endif
