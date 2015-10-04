@@ -25,7 +25,6 @@ unsigned int findNextPrime(unsigned int f);
 unsigned int compute_ht_size(unsigned int song_length);
 unsigned int stringToInt(string s, unsigned int start_pos);
 unsigned int reverseBits(unsigned int num);
-unsigned long xor_fold(long *blocks,int n);
 unsigned int stringFold(string s);
 unsigned int randomFold(unsigned int num, unsigned int bit_chunk_len);
 op_t findRandomOpType(unsigned int table_size);

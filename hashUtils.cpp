@@ -14,7 +14,7 @@ bool isPrime(unsigned int f)
 	if(f % 2 == 0  || f % 3  == 0)
 		return false;
 
-	for(int j = 4; j < f; j++)
+	for(unsigned int j = 4; j < f; j++)
 	{
 		if(f % j == 0)
 		{
@@ -74,33 +74,22 @@ unsigned int reverseBits(unsigned int num)
 	num >>= 1; 
 	while(num)
 	{
-	reverse_num <<= 1;	 
-	reverse_num |= num & 1;
-	num >>= 1;
-	count--;
+	    reverse_num <<= 1;	 
+	    reverse_num |= num & 1;
+	    num >>= 1;
+	    count--;
 	}
 	reverse_num <<= count;
 	return reverse_num;
 }
 
-unsigned long xor_fold(long *blocks,int n)
-{
-	unsigned long result = 0;
-
-	for(int i = 0; i < n; i++)
-	{
-		result ^= blocks[i];
-	}
-	return result;
-}
-
 unsigned int stringFold(string s)
 {
 	unsigned int result = 0,foldedStr = 0,i = 0;
-	int strLength = s.length();
+	unsigned int strLength = s.length();
 	int chunkNum = 0;
 
-	cout << s <<endl;
+	//cout << s <<endl;
 	
 	for(i = 0; i < strLength; i += 4)
 	{
@@ -152,43 +141,17 @@ op_t findRandomOpType(unsigned int table_size)
 	op_t result_op = OP_TYPE_GET;
 	unsigned int fold;
 	
-	fold = ceil(log((double)table_sz));
+	fold = (unsigned int)ceil(log((double)table_sz));
 	randon_num = (int)rand();
 
 	/* Find MSB of random folded result */
 	if(randomFold((unsigned int)randon_num,fold) & (1 << (fold-1)))
 	{
 		result_op = OP_TYPE_PUT;
-		printf("PUT\n");
 	}
 	else
 	{
 	    result_op = OP_TYPE_GET;
-		printf("GET\n");
 	}
 	return result_op;
 }
-#if 0
-int main()
-{
-	time_t t;
-	op_t random_operation_type;
-
-	/* Intialize random number generator */
-    srand((unsigned int) time(&t));
-
-	/* Determine List Length after parsing the input */
-	int list_length = 8;
-	
-	table_sz = compute_ht_size(list_length);
-	/* Find the random operation type */
-
-	random_operation_type = findRandomOpType(table_sz);
-
-	unsigned int hash_key = stringFold("Listen to the music");  // Answer should be 946358539
-	
-	printf("Hash Index = %d\n",hash_key);
-	return 0;
-}
-#endif
-#endif
