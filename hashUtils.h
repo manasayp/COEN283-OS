@@ -6,7 +6,6 @@
 #include<string.h>
 #include<iostream>
 #include<string>
-#include<math.h>
 #include<time.h>
 #include<vector>
 

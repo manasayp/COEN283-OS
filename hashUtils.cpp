@@ -1,20 +1,30 @@
-#if 1
 #include"hashUtils.h"
 
 using namespace std;
  
 unsigned int table_sz =  0;
 
+/******************************************
+ * Find out if a given number is prime
+ *
+ *
+ *
+ ******************************************/
 bool isPrime(unsigned int f)
 {
 	int count = 0;
+    unsigned int sqrt_f = sqrt(f);
 	if(f == 2 || f == 3)
+	{
 		return true;
+	}
 
 	if(f % 2 == 0  || f % 3  == 0)
+	{
 		return false;
+	}
 
-	for(unsigned int j = 4; j < f; j++)
+	for(unsigned int j = 2; j <= sqrt_f ; j++)
 	{
 		if(f % j == 0)
 		{
@@ -22,9 +32,16 @@ bool isPrime(unsigned int f)
 			break;
 		}
 	}
+
 	if(count == 0)
+	{
 		return true;
-	return false;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 unsigned int findNextPrime(unsigned int f)

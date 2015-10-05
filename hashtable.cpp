@@ -1,4 +1,4 @@
-#include"HashTable.h"
+#include "hashTable.h"
 
 using namespace std;
 
@@ -36,6 +36,9 @@ void hashNodes::setNext(hashNodes *next)
 
 hashTable::hashTable(int table_size) 
 {
+	    pthread_mutex_t newmutex;
+	    pthread_mutex_init(&newmutex, NULL);
+	    this->hashlock = newmutex;
 	    this->hashTableSz = table_size;
         table = new hashNodes*[table_size];
         for(int i = 0; i < table_size; i++)
@@ -48,26 +51,31 @@ int hashTable::get(unsigned int &hash_key,string &song_name)
    {
        int hash_index;
 	   hash_index = hash_key % hashTableSz;
+	   pthread_mutex_lock(&this->hashlock);
        hashNodes *entry = table[hash_index];
        while(entry != NULL)
        {
            if(song_name.compare(entry->getValue())  == 0)
            { 
                song_name = entry->getValue();
+               pthread_mutex_unlock(&this->hashlock);
                return hash_index;
            }
            entry = entry->getNext();
        } 
+       pthread_mutex_unlock(&this->hashlock);
        return -1;   
     }
 
 int hashTable::put(unsigned int &hash_key,string &song_name)
     {
         int hash_index = hash_key % hashTableSz;
+        pthread_mutex_lock(&this->hashlock);
+
         hashNodes *prev = NULL;
         hashNodes *entry = table[hash_index];
  
-        while(entry != NULL && entry->getKey() != hash_key)
+        while((entry != NULL) && (entry->getValue().compare(song_name) != 0))
         {
             prev = entry;
             entry = entry->getNext();
@@ -85,12 +93,15 @@ int hashTable::put(unsigned int &hash_key,string &song_name)
                 prev->setNext(entry);
             } 		
         }
-		else if(entry->getKey() == hash_key)
+		else if(entry->getValue().compare(song_name) != 0)
 		{
 			hash_index = -1;
 		}
+        pthread_mutex_unlock(&this->hashlock);
 		return hash_index;
     }
+
+
 hashTable::~hashTable()
    {
        for(int i = 0; i < hashTableSz; i++)
@@ -110,5 +121,22 @@ hashTable::~hashTable()
        delete[] table;
     }
 
-   
+void hashTable::printContents()
+ {
+	 for(int i = 0; i < hashTableSz; i++)
+     {
+		 if(table[i] != NULL)
+		 {
+			 hashNodes *entry = table[i];
+			 cout << "Contents in Hash Table index : " << i << endl;
+			 while(entry != NULL)
+			 {
+				 cout << "Song name : " << entry->getValue() << "\t Hash Key : " << entry->getKey() << endl;
+				 entry = entry->getNext();
+			 }
+			 cout << endl;
+		 }
+	 }
+ }
+
   
