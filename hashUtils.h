@@ -12,9 +12,9 @@
 using namespace std;
 
 typedef enum op_t
-{
-	OP_TYPE_GET = 0,
-	OP_TYPE_PUT = 1
+{	
+    OP_TYPE_GET = 0,
+    OP_TYPE_PUT = 1
 } op_t;
 
 extern unsigned int table_sz;

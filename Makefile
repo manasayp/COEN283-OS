@@ -1,6 +1,6 @@
-all:	ThreadSafeHashMain.cpp HashTable.cpp hashUtils.cpp hashUtils.h HashTable.h
-	g++ -o P1 ThreadSafeHashMain.cpp HashTable.cpp hashUtils.cpp hashUtils.h HashTable.h
-debug:	ThreadSafeHashMain.cpp HashTable.cpp hashUtils.cpp hashUtils.h HashTable.h
-	g++ -g -o P1 ThreadSafeHashMain.cpp HashTable.cpp hashUtils.cpp hashUtils.h HashTable.h
+all:	threadSafeHashMain.cpp hashTable.cpp hashUtils.cpp hashUtils.h hashTable.h
+	g++ -pthread -o P1 threadSafeHashMain.cpp hashTable.cpp hashUtils.cpp hashUtils.h hashTable.h
+debug:	threadSafeHashMain.cpp hashTable.cpp hashUtils.cpp hashUtils.h hashTable.h
+	g++ -pthread -g -o P1 threadSafeHashMain.cpp hashTable.cpp hashUtils.cpp hashUtils.h hashTable.h
 clean:
 	rm -f *.o *~ P1 core

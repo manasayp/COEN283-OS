@@ -5,6 +5,7 @@
 
 using namespace std;
 
+/*Linked list for each hash table index*/
 class hashNodes
 {
     unsigned int hash_key;
@@ -19,11 +20,12 @@ public:
     void setNext(hashNodes *next);
 };
 
+/*Hash Table*/
 class hashTable
 {
     hashNodes **table;
-	int hashTableSz;
-	pthread_mutex_t hashlock;
+    int hashTableSz;
+    pthread_mutex_t *hashlock;
 public:
     hashTable(int table_size);
     int get(unsigned int &hash_key,string &song_name);
